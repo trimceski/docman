@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Document Manager</title>
+    <meta name="description" content="">
+    <meta name="author" content="Darko Trimcheski">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.6.0/bootstrap-table.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="lib/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Document Manager</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Home</a>
+                    </li>
+                    <li><a href="#" data-toggle="modal" data-target="#addModal">Add document</a>
+                    </li>
+                    <li><a href="#" data-toggle="modal" data-target="#catModal">Categories</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <div class="container-fluid">
+        <div class="starter-template">
+            <table id="documents" data-url="api/" data-toggle="table" data-side-pagination="server" data-pagination="true" data-page-list="[5, 10, 20, 50, 100]" data-search="true" data-show-refresh="true" data-show-columns="true" data-click-to-select="true" data-single-select="true">
+                <thead>
+                    <tr>
+                        <th data-field="state" data-checkbox="true"></th>
+                        <th data-field="id" data-sortable="true">Document ID</th>
+                        <th data-field="category" data-sortable="true">Category</th>
+                        <th data-field="name" data-sortable="true">Name</th>
+                        <th data-field="description" data-sortable="true">Description</th>
+                        <th data-field="created" data-sortable="true">Creation date</th>
+                        <th data-field="modified" data-sortable="true">Last Modified date</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Add document</h4>
+                </div>
+                <form name="frm_add" action="api/" method="post" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <input type="text" name="name" class="form-control" placeholder="Name" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea name="description" class="form-control" rows="3" placeholder="Description" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <select name="category" class="form-control" required>
+                                <option value="">Select category</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input type="file" name="file" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-primary" id="btn_add_doc" value="Save changes">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="loading"></div>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Edit document</h4>
+                </div>
+                <form name="frm_edit">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <input type="text" name="name" class="form-control" placeholder="Name" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea name="description" class="form-control" rows="3" placeholder="Description" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <select name="category" class="form-control" required>
+                                <option value="">Select category</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-primary" id="btn_edit_doc" value="Save changes">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="catModal" tabindex="-1" role="dialog" aria-labelledby="catModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Categories</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="catToolbar">
+                       <form name="frm_addCat">
+                        <div class="input-group">
+                                <input name="title" type="text" class="form-control" placeholder="Category name" required>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary" type="submit">Save</button>
+                                </span>
+                        </div>
+                        </form>
+                    </div>
+                    <table id="categories" data-url="api/categories" data-toggle="table" data-side-pagination="server" data-pagination="true" data-page-size="5" data-toolbar="catToolbar" data-select-item-name="cat_selected" data-click-to-select="true" data-single-select="true">
+                        <thead>
+                            <tr>
+                                <th data-field="state" data-checkbox="true"></th>
+                                <th data-field="title">Category</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script>
+        window.jQuery || document.write('<script src="lib/jquery/jquery-2.1.3.min.js"><\/script>')
+    </script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.6.0/bootstrap-table.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
